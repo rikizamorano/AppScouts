@@ -1,0 +1,5 @@
+{
+  "name": "Scout Management Platform",
+  "description": "A web platform for the registration and management of Scout Groups and Beneficiaries in Chile, featuring role-based access for National Administrators, Group Administrators, and Beneficiaries.",
+  "requestFramePermissions": []
+}
