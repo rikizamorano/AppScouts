@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { User, Role, Page, ScoutGroup, Beneficiary } from './types';
 import { initialUsers, initialGroups, initialBeneficiaries } from './constants';
 import LoginPage from './pages/LoginPage';
@@ -8,13 +7,45 @@ import RegisterGroupPage from './pages/RegisterGroupPage';
 import RegisterBeneficiaryPage from './pages/RegisterBeneficiaryPage';
 import Header from './components/Header';
 
+// Claves para el localStorage
+const STORAGE_KEYS = {
+  USERS: 'appscouts_users',
+  GROUPS: 'appscouts_groups',
+  BENEFICIARIES: 'appscouts_beneficiaries',
+};
+
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>(Page.Login);
 
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [groups, setGroups] = useState<ScoutGroup[]>(initialGroups);
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(initialBeneficiaries);
+  // Inicialización de estados leyendo directamente desde localStorage
+  const [users, setUsers] = useState<User[]>(() => {
+    const savedUsers = localStorage.getItem(STORAGE_KEYS.USERS);
+    return savedUsers ? JSON.parse(savedUsers) : initialUsers;
+  });
+
+  const [groups, setGroups] = useState<ScoutGroup[]>(() => {
+    const savedGroups = localStorage.getItem(STORAGE_KEYS.GROUPS);
+    return savedGroups ? JSON.parse(savedGroups) : initialGroups;
+  });
+
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(() => {
+    const savedBeneficiaries = localStorage.getItem(STORAGE_KEYS.BENEFICIARIES);
+    return savedBeneficiaries ? JSON.parse(savedBeneficiaries) : initialBeneficiaries;
+  });
+
+  // Efecto que guarda en localStorage cada vez que algún estado cambia
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+  }, [users]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.GROUPS, JSON.stringify(groups));
+  }, [groups]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.BENEFICIARIES, JSON.stringify(beneficiaries));
+  }, [beneficiaries]);
 
   const handleLogin = useCallback((rut: string, pass: string) => {
     const user = users.find(u => u.rut === rut);
